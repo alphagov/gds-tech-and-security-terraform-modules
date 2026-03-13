@@ -1,0 +1,4 @@
+* @alphagov/engineering-enablement-tech
+
+# Only EE tech leads can modify the codeowners file
+CODEOWNERS @alphagov/engineering-enablement-tech-leads
