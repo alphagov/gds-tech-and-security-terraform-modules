@@ -1,0 +1,36 @@
+---
+name: Release
+
+on:
+  push:
+    tags:
+      - "*/v*"  # Matches tags like aws-cid-management/v1.0.0
+
+permissions:
+  contents: write
+
+jobs:
+  extract-module:
+    name: Extract Module Info
+    runs-on: ubuntu-latest
+    outputs:
+      module-name: ${{ steps.extract.outputs.module }}
+      version: ${{ steps.extract.outputs.version }}
+    steps:
+      - name: Extract module and version from tag
+        id: extract
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          MODULE="${TAG%/v*}"
+          VERSION="${TAG#*/}"
+          echo "module=${MODULE}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Module: ${MODULE}, Version: ${VERSION}"
+
+  release:
+    uses: alphagov/gds-github-workflows/.github/workflows/terraform-module-release.yml@29b2abf32227088428af98e8a9278d62e6dd0c93 # v0.0.7
+    name: GitHub Release
+    needs: extract-module
+    with:
+      module-name: ${{ needs.extract-module.outputs.module-name }}
+      version: ${{ needs.extract-module.outputs.version }}
