@@ -198,7 +198,7 @@ terraform import 'module.destination.aws_iam_saml_provider.saml[0]' arn:aws:iam:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.36.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
 
 ## Modules
 
