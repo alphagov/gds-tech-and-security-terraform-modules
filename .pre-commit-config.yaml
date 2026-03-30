@@ -69,46 +69,46 @@ repos:
     hooks:
       - id: gitleaks
 
-  # - repo: https://github.com/antonbabenko/pre-commit-terraform
-  #   rev: d0e12caebb2ab0ee8bf98181c8bfe9702bca103d # v1.105.0
-  #   hooks:
-  #     - id: terraform_fmt
-  #       args:
-  #         - --args=-recursive
-  #         - --args=-write=true
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: d0e12caebb2ab0ee8bf98181c8bfe9702bca103d # v1.105.0
+    hooks:
+      - id: terraform_fmt
+        args:
+          - --args=-recursive
+          - --args=-write=true
 
-  #     - id: terraform_docs
-  #       args:
-  #         - --args=--config=.terraform-docs.yml
+      - id: terraform_docs
+        args:
+          - --args=--config=.terraform-docs.yml
 
-  #     - id: terraform_validate
-  #       name: Terraform validate modules
-  #       args:
-  #         - --args=-json
-  #         - --args=-no-color
-  #         - --hook-config=--retry-once-with-cleanup=true
+      - id: terraform_validate
+        name: Terraform validate modules
+        args:
+          - --args=-json
+          - --args=-no-color
+          - --hook-config=--retry-once-with-cleanup=true
 
-  #     - id: terraform_tflint
-  #       args:
-  #         - --args=--recursive
-  #         - --args=--color
+      - id: terraform_tflint
+        args:
+          - --args=--recursive
+          - --args=--color
 
-  #     - id: terraform_checkov
-  #       args:
-  #         - --args=--quiet
-  #         - --args=--compact
+      - id: terraform_checkov
+        args:
+          - --args=--quiet
+          - --args=--compact
 
-  #     - id: terraform_trivy
-  #       args:
-  #         - --hook-config=--parallelism-limit=1
-  #         - --args=--skip-dirs="**/.terraform,**/cloudformation"
-  #         - --args=--severity="CRITICAL,HIGH"
+      - id: terraform_trivy
+        args:
+          - --hook-config=--parallelism-limit=1
+          - --args=--skip-dirs="**/.terraform,**/cloudformation"
+          - --args=--severity="CRITICAL,HIGH"
 
-  # - repo: local
-  #   hooks:
-  #     - id: terraform_test
-  #       name: Terraform test
-  #       entry: bash -c 'find . -name "*.tf" -not -path "*/.terraform/*" -exec dirname {} \; | sort -u | while read dir; do terraform -chdir="$dir" test || exit 1; done'
-  #       language: system
-  #       files: \.tf$
-  #       pass_filenames: false
+  - repo: local
+    hooks:
+      - id: terraform_test
+        name: Terraform test
+        entry: bash -c 'find . -name "*.tf" -not -path "*/.terraform/*" -exec dirname {} \; | sort -u | while read dir; do terraform -chdir="$dir" test || exit 1; done'
+        language: system
+        files: \.tf$
+        pass_filenames: false
