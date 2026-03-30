@@ -39,31 +39,20 @@ data "aws_iam_policy_document" "stack_bucket_policy" {
 ## Provision a bucket used to contain the cloudformation templates
 # tfsec:ignore:aws-s3-enable-bucket-logging
 module "cloudformation_bucket" {
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=1a431dd0ccc2478399fce247a75caf40a109bb10" # 4.11.0
+  source = "git::https://github.com/alphagov/gds-tech-and-security-terraform-modules.git//aws-s3-bucket?ref=feat/ECP-117"
 
   attach_policy           = true
   block_public_acls       = true
   block_public_policy     = true
   bucket                  = var.stacks_bucket_name
-  expected_bucket_owner   = local.management_account_id
   force_destroy           = true
   ignore_public_acls      = true
   object_ownership        = "BucketOwnerPreferred"
   policy                  = data.aws_iam_policy_document.stack_bucket_policy.json
   restrict_public_buckets = true
+  versioning_status       = "Enabled"
+  enable_encryption       = true
   tags                    = var.tags
-
-  server_side_encryption_configuration = {
-    rule = {
-      apply_server_side_encryption_by_default = {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-
-  versioning = {
-    enabled = true
-  }
 }
 
 ## Upload the cloudformation templates to the bucket

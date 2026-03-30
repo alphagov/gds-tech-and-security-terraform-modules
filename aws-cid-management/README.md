@@ -198,13 +198,13 @@ terraform import 'module.destination.aws_iam_saml_provider.saml[0]' arn:aws:iam:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.38.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cloudformation_bucket"></a> [cloudformation\_bucket](#module\_cloudformation\_bucket) | git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git | 1a431dd0ccc2478399fce247a75caf40a109bb10 |
+| <a name="module_cloudformation_bucket"></a> [cloudformation\_bucket](#module\_cloudformation\_bucket) | git::https://github.com/alphagov/gds-tech-and-security-terraform-modules.git//aws-s3-bucket | feat/ECP-117 |
 
 ## Resources
 
