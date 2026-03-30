@@ -200,7 +200,7 @@ data "aws_iam_policy_document" "dashboards_bucket_policy" {
 #
 # tfsec:ignore:aws-s3-enable-bucket-logging
 module "dashboard_bucket" {
-  source = "git::https://github.com/alphagov/gds-tech-and-security-terraform-modules.git//aws-s3-bucket?ref=feat/ECP-117"
+  source = "git::https://github.com/alphagov/gds-tech-and-security-terraform-modules.git//aws-s3-bucket?ref=aws-s3-bucket/v1.0.0"
 
   attach_policy           = true
   block_public_acls       = true

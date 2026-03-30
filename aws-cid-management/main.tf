@@ -39,7 +39,7 @@ data "aws_iam_policy_document" "stack_bucket_policy" {
 ## Provision a bucket used to contain the cloudformation templates
 # tfsec:ignore:aws-s3-enable-bucket-logging
 module "cloudformation_bucket" {
-  source = "git::https://github.com/alphagov/gds-tech-and-security-terraform-modules.git//aws-s3-bucket?ref=feat/ECP-117"
+  source = "git::https://github.com/alphagov/gds-tech-and-security-terraform-modules.git//aws-s3-bucket?ref=aws-s3-bucket/v1.0.0"
 
   attach_policy           = true
   block_public_acls       = true

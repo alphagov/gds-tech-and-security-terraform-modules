@@ -204,7 +204,7 @@ terraform import 'module.destination.aws_iam_saml_provider.saml[0]' arn:aws:iam:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cloudformation_bucket"></a> [cloudformation\_bucket](#module\_cloudformation\_bucket) | git::https://github.com/alphagov/gds-tech-and-security-terraform-modules.git//aws-s3-bucket | feat/ECP-117 |
+| <a name="module_cloudformation_bucket"></a> [cloudformation\_bucket](#module\_cloudformation\_bucket) | git::https://github.com/alphagov/gds-tech-and-security-terraform-modules.git//aws-s3-bucket | aws-s3-bucket/v1.0.0 |
 
 ## Resources
 
