@@ -87,6 +87,7 @@ repos:
           - --args=-json
           - --args=-no-color
           - --hook-config=--retry-once-with-cleanup=true
+          - --tf-init-args=-upgrade
 
       - id: terraform_tflint
         args:
