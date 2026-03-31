@@ -93,10 +93,10 @@ repos:
           - --args=--recursive
           - --args=--color
 
-      # - id: terraform_checkov
-      #   args:
-      #     - --args=--quiet
-      #     - --args=--compact
+      - id: terraform_checkov
+        args:
+          - --args=--quiet
+          - --args=--compact
 
       - id: terraform_trivy
         args:
