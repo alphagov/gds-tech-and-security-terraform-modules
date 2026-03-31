@@ -1,0 +1,114 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # v6.0.0
+    hooks:
+      - id: detect-private-key
+
+      - id: check-added-large-files
+        args: [ "--maxkb=800" ]
+
+      - id: check-case-conflict
+
+      - id: check-json
+        # Exclude non-standard JSON
+        exclude: |
+            (?x)^(
+                .devcontainer/devcontainer.json|
+                .vscode/tasks.json
+            )$
+
+      - id: check-merge-conflict
+
+      - id: check-symlinks
+
+      - id: check-yaml
+        args: ['--allow-multiple-documents']
+        exclude: |
+            (?x)^(
+                .*/cloudformation/.*\.yaml$
+            )$
+
+      - id: end-of-file-fixer
+
+      - id: pretty-format-json
+        args:
+          - --autofix
+          - --indent=2
+        # Exclude non-standard JSON
+        exclude: |
+            (?x)^(
+                .devcontainer/devcontainer.json|
+                .vscode/tasks.json
+            )$
+
+      - id: trailing-whitespace
+
+  - repo: https://github.com/aws-cloudformation/cfn-lint
+    rev: e9340907215bca44b5e7908dc6f80217384b9632 # v1.46.0
+    hooks:
+      - id: cfn-lint
+        files: .*/cloudformation/.*\.yaml$
+
+  - repo: https://github.com/trussworks/pre-commit-hooks
+    rev: f72781be8d6b5e92653232bfb13f3f10cb1fc0c4 # v2.0.0
+    hooks:
+      - id: markdown-toc
+        files: README\.md$
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: 63c8f8312b7559622c0d82815639671ae42132ac # v2.4.1
+    hooks:
+      - id: codespell
+        args:
+          - --ignore-words
+          - .codespellignore
+          - --write-changes
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: 6eaad039603a4de39fddd1cf5f727391efe9974e # v8.30.0
+    hooks:
+      - id: gitleaks
+
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: d0e12caebb2ab0ee8bf98181c8bfe9702bca103d # v1.105.0
+    hooks:
+      - id: terraform_fmt
+        args:
+          - --args=-recursive
+          - --args=-write=true
+
+      - id: terraform_docs
+        args:
+          - --args=--config=.terraform-docs.yml
+
+      - id: terraform_validate
+        name: Terraform validate modules
+        args:
+          - --args=-json
+          - --args=-no-color
+          - --hook-config=--retry-once-with-cleanup=true
+
+      - id: terraform_tflint
+        args:
+          - --args=--recursive
+          - --args=--color
+
+      - id: terraform_checkov
+        args:
+          - --args=--quiet
+          - --args=--compact
+
+      - id: terraform_trivy
+        args:
+          - --hook-config=--parallelism-limit=1
+          - --args=--skip-dirs="**/.terraform,**/cloudformation"
+          - --args=--severity="CRITICAL,HIGH"
+
+  - repo: local
+    hooks:
+      - id: terraform_test
+        name: Terraform test
+        entry: bash -c 'find . -name "*.tf" -not -path "*/.terraform/*" -exec dirname {} \; | sort -u | while read dir; do terraform -chdir="$dir" test || exit 1; done'
+        language: system
+        files: \.tf$
+        pass_filenames: false
