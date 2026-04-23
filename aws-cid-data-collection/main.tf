@@ -76,7 +76,7 @@ resource "aws_s3_object" "cloudformation_templates" {
 
   bucket                 = module.cloudformation.s3_bucket_id
   etag                   = filemd5("${path.module}/assets/cloudformation/${each.value}")
-  key                    = each.value
+  key                    = format("%s/%s", local.stacks_templates_prefix, each.value)
   server_side_encryption = "AES256"
   source                 = "${path.module}/assets/cloudformation/${each.value}"
 }
@@ -217,7 +217,7 @@ resource "aws_cloudformation_stack" "data_export_destination" {
   name         = var.stack_name_data_exports
   on_failure   = "ROLLBACK"
   tags         = var.tags
-  template_url = format("%s/cudos/%s", local.stacks_base_url, "data-exports-aggregation.yaml")
+  template_url = format("%s/%s/cudos/%s", local.stacks_base_url, local.stacks_templates_prefix, "data-exports-aggregation.yaml")
 
   parameters = {
     "DestinationAccountId" = local.account_id,
@@ -299,7 +299,7 @@ resource "aws_cloudformation_stack" "cudos_data_collection" {
   name         = var.stack_name_collectors
   capabilities = ["CAPABILITY_NAMED_IAM", "CAPABILITY_AUTO_EXPAND"]
   tags         = var.tags
-  template_url = format("%s/cudos/%s", local.stacks_base_url, "deploy-data-collection.yaml")
+  template_url = format("%s/%s/cudos/%s", local.stacks_base_url, local.stacks_templates_prefix, "deploy-data-collection.yaml")
 
   parameters = {
     "IncludeBackupModule"             = var.enable_backup_module ? "yes" : "no",
