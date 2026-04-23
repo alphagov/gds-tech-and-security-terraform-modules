@@ -97,7 +97,7 @@ repos:
         args:
           - --args=--quiet
           - --args=--compact
-          - --args=--config-file "${PWD}/.checkov.yaml"
+          - --args=--config-file ".checkov.yaml"
 
       - id: terraform_trivy
         args:
