@@ -243,7 +243,6 @@ terraform import 'module.destination.aws_iam_saml_provider.saml[0]' arn:aws:iam:
 | <a name="input_stack_name_read_permissions"></a> [stack\_name\_read\_permissions](#input\_stack\_name\_read\_permissions) | The name of the CloudFormation stack to create the collectors | `string` | `"CidDataCollectionReadPermissionsStack"` | no |
 | <a name="input_stacks_bucket_name"></a> [stacks\_bucket\_name](#input\_stacks\_bucket\_name) | The name of the bucket to store the CloudFormation templates | `string` | `"cid-cloudformation-templates"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to all resources | `map(string)` | n/a | yes |
-| <a name="input_time_granularity"></a> [time\_granularity](#input\_time\_granularity) | The granularity of the time for the data exports | `string` | `"HOURLY"` | no |
 
 ## Outputs
 
@@ -251,5 +250,6 @@ terraform import 'module.destination.aws_iam_saml_provider.saml[0]' arn:aws:iam:
 |------|-------------|
 | <a name="output_cloudformation_bucket_name"></a> [cloudformation\_bucket\_name](#output\_cloudformation\_bucket\_name) | The name of the bucket to store the CloudFormation templates |
 | <a name="output_cloudformation_bucket_url"></a> [cloudformation\_bucket\_url](#output\_cloudformation\_bucket\_url) | The URL of the bucket to store the CloudFormation templates |
+| <a name="output_cloudformation_templates_prefix"></a> [cloudformation\_templates\_prefix](#output\_cloudformation\_templates\_prefix) | The S3 key prefix (includes hash) for CloudFormation templates |
 | <a name="output_management_account_id"></a> [management\_account\_id](#output\_management\_account\_id) | The AWS account ID for the management account |
 <!-- END_TF_DOCS -->

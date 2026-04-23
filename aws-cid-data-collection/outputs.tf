@@ -1,11 +1,12 @@
-output "destination_account_id" {
-  description = "The ID of the data collection account"
-  value       = local.account_id
-}
 
 output "cloudformation_bucket_arn" {
   description = "The name of the bucket where to store the CloudFormation"
   value       = module.cloudformation.s3_bucket_arn
+}
+
+output "cloudformation_templates_prefix" {
+  description = "The S3 key prefix (includes hash) for CloudFormation templates"
+  value       = local.stacks_templates_prefix
 }
 
 output "destination_bucket_name" {
