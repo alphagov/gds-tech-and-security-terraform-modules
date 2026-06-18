@@ -25,7 +25,7 @@ resource "aws_cloudwatch_metric_alarm" "this" {
 resource "aws_cloudwatch_event_rule" "this" {
   count         = var.type == "eventbridge" ? 1 : 0
   name          = var.alarm_name
-  description   = "EventBridge rule for ${var.alarm_name}"
+  description   = var.alarm_description
   event_pattern = jsonencode(var.event_pattern)
   tags = {
     Name        = var.alarm_name
