@@ -1,62 +1,71 @@
 # Chatbot Slack Notifications
 
-This module can be used to create a cloudwatch metric or eventbridge alarm and route to slack.
+This module can be used to support the following alarms and route to slack.
 
-It is at an account level, so you would need the following setup in the account folder.
+* cloudwatch metric
+* cloudwatch eventbridge
+* codestar (ci) notifications
 
-1. Create you alerts (eventbridge or metric)
+It is to be used at an account level, so you would need the following setup in the account folder. This example shows how to add the same alarm to production and sandbox.
+
+## Create your alerts (eventbridge, metric, codestar)
+
+The provider is optional, if not specified it will use default region.
 
 eg
 
-```terraform/tooling/billing/alarms.tf```
+```terraform/account-name/alarms.tf```
 
 ```hcl
-module "dummy_metric_alarm" {
-  count = var.environment == "sandbox" ? 1 : 0
+# metric
+module "lambda-errors" {
+  source          = "../modules/chatbot-slack-notifications"
+  type            = "metric"
+  environment     = var.environment
+  chatbot_role_id = module.chatbot-role.id
 
-  source              = "../../modules/chatbot-slack-notifications"
-  type                = "metric"
-  environment         = var.environment
-  chatbot_role_id     = module.chatbot-role-sandbox[0].id
-
-  alarm_name          = "test-always-firing-metric"
-  alarm_description   = "Test alarm - always fires due to missing data."
+  alarm_name          = "lambda-errors"
+  alarm_description   = "The account bootstrap lambda has failed"
   namespace           = "AWS/Lambda"
   metric_name         = "Errors"
   statistic           = "Sum"
   comparison_operator = "GreaterThanThreshold"
   threshold           = 0
-  period              = 60
+  period              = 300
   evaluation_periods  = 1
-  treat_missing_data  = "breaching" # for test alert so it will always fire
+  treat_missing_data  = "notBreaching"
   dimension_name      = "FunctionName"
-  dimension_value     = "this-function-does-not-exist" # for test alert so it will always fire
+  dimension_value     = "ExampleLambda"
 }
 
-module "dummy_eventbridge_alarm" {
-  count = var.environment == "sandbox" ? 1 : 0
-
-  source          = "../../modules/chatbot-slack-notifications"
+# event bridge
+module "service_linked_role_alarm" {
+  source          = "../../../modules/chatbot-slack-notifications"
   type            = "eventbridge"
   environment     = var.environment
-  chatbot_role_id = module.chatbot-role-sandbox[0].id
+  chatbot_role_id = module.chatbot-role.id
 
-  alarm_name        = "test-always-firing-eventbridge"
-  alarm_description = "Test alert - fires on AssumeRole."
+  providers = {
+    aws = aws.us_east_1
+  }
+
+  alarm_name        = "service-linked-role-added"
+  alarm_description = "A Service Linked Role has been added to the ci member account."
 
   event_pattern = {
-    source      = ["aws.sts"]
+    source      = ["aws.iam"]
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
-      eventSource = ["sts.amazonaws.com"]
-      eventName   = ["AssumeRole"]
+      eventSource = ["iam.amazonaws.com"]
+      eventName   = ["CreateServiceLinkedRole"]
     }
   }
 
   input_paths = {
-    time      = "$.time"
-    role_name = "$.detail.requestParameters.roleArn"
-    caller    = "$.detail.userIdentity.arn"
+    time         = "$.time"
+    user         = "$.detail.userIdentity.arn"
+    service_name = "$.detail.requestParameters.aWSServiceName"
+    role_name    = "$.detail.responseElements.role.roleName"
   }
 
   input_template = <<-EOT
@@ -64,100 +73,210 @@ module "dummy_eventbridge_alarm" {
       "version": "1.0",
       "source": "custom",
       "content": {
-        "title": "Test EventBridge Alert",
-        "description": "*Role:* `<role_name>`\n*Caller:* `<caller>`\n*Time:* <time>"
+        "title": "Service Linked Role Created in the Sandbox CI Account",
+        "description": "*Role:* `<role_name>`\n*Service:* `<service_name>`\n*Created by:* `<user>`\n*Time:* <time>\n*Runbook:* https://github.com/"
       }
     }
   EOT
 }
 
-module "another_dummy_metric_alarm" {
-  count = var.environment == "production" ? 1 : 0
+# codestar (ci)
+module "codepipeline_notifications" {
+  source            = "../../modules/chatbot-slack-notifications"
+  type              = "codestar"
+  environment       = var.environment
+  chatbot_role_id   = module.chatbot-role.id
+  alarm_name        = "code-pipeline-errors"
+  alarm_description = "Code piepline errors on ${var.environment}"
 
-  source              = "../../modules/chatbot-slack-notifications"
-  type                = "metric"
-  environment         = var.environment
-  chatbot_role_id     = module.chatbot-role-production[0].id
-
-  alarm_name          = "another-test-always-firing-metric"
-  alarm_description   = "Another Test alarm - always fires due to missing data."
-  namespace           = "AWS/Lambda"
-  metric_name         = "Errors"
-  statistic           = "Sum"
-  comparison_operator = "GreaterThanThreshold"
-  threshold           = 0
-  period              = 60
-  evaluation_periods  = 1
-  treat_missing_data  = "breaching" # for test alert so it will always fire
-  dimension_name      = "FunctionName"
-  dimension_value     = "this-function-does-not-exist" # for test alert so it will always fire
+  notification_rules = [
+    {
+      pipeline_name = "account-vending-pipeline-${var.environment}"
+      pipeline_arn  = module.account_vending_pipeline.codepipeline_arn
+      event_type_ids = [
+        "codepipeline-pipeline-stage-execution-failed",
+        "codepipeline-pipeline-manual-approval-needed",
+      ]
+      status = var.codepipeline_notifications_status
+    },
+    {
+      pipeline_name = "gds-org-deployment-pipeline-${var.environment}"
+      pipeline_arn  = module.deployment_pipeline.codepipeline_arn
+      event_type_ids = [
+        "codepipeline-pipeline-stage-execution-failed",
+        "codepipeline-pipeline-manual-approval-needed",
+      ]
+      status = var.codepipeline_notifications_status
+    }
+  ]
 }
 ```
 
-2. Slack Config
+## Slack Config
 
-You will have a prod and sandbox `aws_chatbot_slack_channel_configuration` resource per slack channel with a list of alert `sns_topic_arns`. There is
-also a module call to create the chatbot role, this role is only needed per account and env.
+> [!NOTE]
+> You can find the slack IDs by opening the slack channel in the browser - [gds.slack.com](https://gds.slack.com)
+>
+> `https://app.slack.com/client/WORKSPACE-ID/CHANNEL-ID`
+>
+> The workspace ID is first, and the channel ID is second. You can also find the channel ID by clicking the 3 dots menu at the top right and then channel details.
+>
+> The account needs the slack workspace to be [configured for chatbot](https://github.com/alphagov/engineering-enablement/wiki/Runbook%3A-Configure-a-Slack-workspace-for-AWS-Chatbot) - this is only need once per account.
+
+You will have one `aws_chatbot_slack_channel_configuration` resource per slack channel with a list of alert `sns_topic_arns`. There is
+also a module call to create the chatbot role per env.
 
 eg
 
-```terraform/tooling/billing/alarms-slack.tf```
+```terraform/my-account/alarms-slack.tf```
 
 ```hcl
-module "chatbot-role-production" {
-  count  = var.environment == "production" ? 1 : 0
-  source = "../../modules/chatbot-slack-notifications-iam"
+module "chatbot-role" {
+  source = "../modules/chatbot-slack-notifications-iam"
 }
 
-module "chatbot-role-sandbox" {
-  count  = var.environment == "sandbox" ? 1 : 0
-  source = "../../modules/chatbot-slack-notifications-iam"
-}
-
-resource "aws_chatbot_slack_channel_configuration" "billing-tmp-chatbot-alerts-test-sandbox" {
-  count  = var.environment == "sandbox" ? 1 : 0
-
-  configuration_name = "billing-tmp-chatbot-alerts-test"
-  slack_channel_id   = "C0BB28JEG92" # tmp-chatbot-alerts-test
-  slack_team_id      = "T8GT9416G"
+resource "aws_chatbot_slack_channel_configuration" "account-slack-channel-name" {
+  configuration_name = "account-slack-channel-name"
+  slack_channel_id   = "XXXXXXXX" # slack-channel-name
+  slack_team_id      = "TXXXXXXX"
   sns_topic_arns = [
-    module.dummy_metric_alarm[0].sns_topic_arn,
-    module.dummy_eventbridge_alarm[0].sns_topic_arn,
+    module.lambda-errors.sns_topic_arn,
+    module.service_linked_role_alarm.sns_topic_arn,
+    module.codestar_notifications.sns_topic_arn
   ]
-  iam_role_arn       =  module.chatbot-role-sandbox[0].arn
-  logging_level      = "INFO"
+  iam_role_arn  = module.chatbot-role.arn
+  logging_level = "INFO"
 
   tags = {
-    Name        = "billing-tmp-chatbot-alerts-test"
-    environment = var.environment
-    Owner       = "engineering-enablement"
-    Terraform   = "true"
-  }
-}
-
-resource "aws_chatbot_slack_channel_configuration" "billing-tmp-chatbot-alerts-test-prod" {
-  count  = var.environment == "production" ? 1 : 0
-
-  configuration_name = "billing-tmp-chatbot-alerts-test"
-  slack_channel_id   = "C0BB28JEG92" # tmp-chatbot-alerts-test
-  slack_team_id      = "T8GT9416G"
-  sns_topic_arns = [
-    module.another_dummy_metric_alarm[0].sns_topic_arn,
-  ]
-  iam_role_arn       =  module.chatbot-role-production[0].arn
-  logging_level      = "INFO"
-
-  tags = {
-    Name        = "billing-tmp-chatbot-alerts-test"
+    Name        = "account-slack-channel-name"
     environment = var.environment
     Owner       = "engineering-enablement"
     Terraform   = "true"
   }
 }
 ```
-## Note
 
-The above example will show you how to set it up, but take note:
+## Adding Alarms Depenant on Environment
 
-* The `alarms.tf` creates the alerts and outputs `sns_topic_arn`. The `alarms-slack.tf` has a resoutrce called `aws_chatbot_slack_channel_configuration` that needs the list of alert `sns_topic_arn`.
-* The `alarms-slack.tf` - creates the chabot role. This is referenced in both the `alarms.tf` and `alarms-slack.tf`
+### Adding alarms to just one environment
+
+You can use locals in `alarms-slack.tf`, please keep reading for full context and examples.
+
+#### Alarms
+
+```terraform/my-account/alarms.tf```
+
+Apply your alarm to just prod, eg.
+
+```hcl
+module "lambda-errors" {
+  count = var.environment == "production" ? 1 : 0
+  ...
+```
+
+#### Alarms Slack
+
+```terraform/my-account/alarms-slack.tf```
+
+It is ok to have a `aws_chatbot_slack_channel_configuration` with an empty `sns_topic_arns` list. The resource is created but with no alarm routing. You may have an alarm only on prod and only on sanbox, the `locals` can be edited accordingly, eg
+
+```hcl
+locals {
+  sns_topic_arns_by_env = {
+    production = compact([
+      try(module.lambda-errors[0].sns_topic_arn, null),         # only prod
+    ])
+    sandbox = compact([
+      try(module.another-lambda-errors[0].sns_topic_arn, null),  # only sandbox
+    ])
+  }
+  sns_topic_arns = lookup(local.sns_topic_arns_by_env, var.environment, [])
+}
+```
+
+In the example below we only have prod:
+
+```hcl
+locals {
+  sns_topic_arns_by_env = {
+    production = compact([
+      try(module.lambda-errors[0].sns_topic_arn, null),       # only prod
+    ])
+  }
+  sns_topic_arns = lookup(local.sns_topic_arns_by_env, var.environment, [])
+}
+
+resource "aws_chatbot_slack_channel_configuration" "account-slack-channel-name" {
+  configuration_name = "account-slack-channel-name"
+  slack_channel_id   = "xxxx" # gds-xxxx
+  slack_team_id      = "xxxxx"
+  sns_topic_arns     = local.sns_topic_arns     # only prod, sandbox is empty
+  iam_role_arn       = module.chatbot-role.arn
+  logging_level      = "INFO"
+
+  tags = {
+    Name        = "account-slack-channel-name"
+    environment = var.environment
+    Owner       = "engineering-enablement"
+    Terraform   = "true"
+  }
+}
+```
+
+### Adding alarms on both prod and sandbox, and some env dependent ones
+
+#### Alarms
+
+```terraform/my-account/alarms.tf```
+
+Apply your alarm to just prod, eg.
+
+```hcl
+module "lambda-errors" {
+  count  = var.environment == "production" ? 1 : 0
+  source = "../../modules/chatbot-slack-notifications"
+...
+```
+
+An alarm applied to both sandbox and prod
+
+```hcl
+module "codepipeline_notifications" {
+  source = "../../modules/chatbot-slack-notifications"
+...
+```
+
+#### Alarms Slack
+
+```terraform/my-account/alarms-slack.tf```
+
+```hcl
+locals {
+  sns_topic_arns_by_env = {
+    production = compact([
+      try(module.lambda-errors[0].sns_topic_arn, null),               # only prod
+    ])
+  }
+  sns_topic_arns = lookup(local.sns_topic_arns_by_env, var.environment, [])
+}
+
+
+resource "aws_chatbot_slack_channel_configuration" "account-slack-channel-name" {
+  configuration_name = "account-slack-channel-name"
+  slack_channel_id   = "xxxx" # gds-xxxx
+  slack_team_id      = "xxxxx"
+  sns_topic_arns = concat(
+    local.sns_topic_arns,                                    # env dependent
+    [module.codepipeline_notifications.sns_topic_arn],       # both envs
+  )
+  iam_role_arn       = module.chatbot-role.arn
+  logging_level      = "INFO"
+
+  tags = {
+    Name        = "account-slack-channel-name"
+    environment = var.environment
+    Owner       = "engineering-enablement"
+    Terraform   = "true"
+  }
+}
+```

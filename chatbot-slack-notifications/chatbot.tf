@@ -46,3 +46,19 @@ resource "aws_cloudwatch_event_target" "sns" {
     input_template = var.input_template
   }
 }
+
+# codestar (ci)
+resource "aws_codestarnotifications_notification_rule" "this" {
+  for_each = var.type == "codestar" ? { for c in var.notification_rules : c.pipeline_name => c } : {}
+
+  name           = each.key
+  resource       = each.value.pipeline_arn
+  event_type_ids = each.value.event_type_ids
+  detail_type    = "BASIC"
+  status         = each.value.status
+
+  target {
+    type    = "SNS"
+    address = aws_sns_topic.this.arn
+  }
+}

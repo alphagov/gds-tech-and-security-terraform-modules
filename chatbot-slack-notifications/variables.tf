@@ -5,22 +5,22 @@ variable "environment" {
 }
 
 variable "type" {
-  description = "Type: 'metric' or 'eventbridge'. "
+  description = "Type: 'metric', 'eventbridge', or 'codestar'. "
   type        = string
   validation {
-    condition     = contains(["metric", "eventbridge"], var.type)
-    error_message = "type must be either metric or eventbridge"
+    condition     = contains(["metric", "eventbridge", "codestar"], var.type)
+    error_message = "type must be either metric, eventbridge, or codestar"
   }
 }
 
 variable "alarm_name" {
-  description = "Name of the CloudWatch alarm"
+  description = "Name of the alarm"
   type        = string
   default     = null
 }
 
 variable "alarm_description" {
-  description = "Description of the CloudWatch alarm"
+  description = "Description of the alarm"
   type        = string
   default     = null
 }
@@ -108,4 +108,15 @@ variable "input_template" {
   description = "Input transformer template string (message)"
   type        = string
   default     = null
+}
+
+# codestar
+variable "notification_rules" {
+  type = list(object({
+    pipeline_name  = string
+    pipeline_arn   = string
+    status         = string
+    event_type_ids = list(string)
+  }))
+  default = []
 }
