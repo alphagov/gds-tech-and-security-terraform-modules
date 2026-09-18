@@ -40,7 +40,7 @@ Everything else is handled in code.
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
@@ -48,9 +48,9 @@ Everything else is handled in code.
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
+| ---- | ------- |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.65.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.9.1 |
 
 ## Modules
 
@@ -59,7 +59,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_chatbot_slack_channel_configuration.codepipeline-notifications](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/chatbot_slack_channel_configuration) | resource |
 | [aws_codestarnotifications_notification_rule.codepipeline_notification](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codestarnotifications_notification_rule) | resource |
 | [aws_iam_role.slack_chatbot_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -69,7 +69,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_notification_rules"></a> [notification\_rules](#input\_notification\_rules) | List of notification rule configurations | <pre>list(object({<br/>    pipeline_name  = string<br/>    pipeline_arn   = string<br/>    event_type_ids = list(string)<br/>    status         = optional(string, "ENABLED")<br/>  }))</pre> | `[]` | no |
 | <a name="input_slack_channel_id"></a> [slack\_channel\_id](#input\_slack\_channel\_id) | Name of the slack channel where to send notifications | `string` | n/a | yes |
 | <a name="input_slack_workspace_id"></a> [slack\_workspace\_id](#input\_slack\_workspace\_id) | Slack workspace ID from the Amazon Q chatbot integration | `string` | n/a | yes |

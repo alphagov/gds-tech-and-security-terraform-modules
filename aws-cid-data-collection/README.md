@@ -190,27 +190,27 @@ terraform import 'module.destination.aws_iam_saml_provider.saml[0]' arn:aws:iam:
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.38.0 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_cloudformation"></a> [cloudformation](#module\_cloudformation) | git::https://github.com/alphagov/gds-tech-and-security-terraform-modules.git//aws-s3-bucket | aws-s3-bucket/v1.0.0 |
 | <a name="module_dashboard_bucket"></a> [dashboard\_bucket](#module\_dashboard\_bucket) | git::https://github.com/alphagov/gds-tech-and-security-terraform-modules.git//aws-s3-bucket | aws-s3-bucket/v1.0.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_cloudformation_stack.cudos_data_collection](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudformation_stack) | resource |
 | [aws_cloudformation_stack.dashboards](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudformation_stack) | resource |
 | [aws_cloudformation_stack.data_export_destination](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudformation_stack) | resource |
@@ -234,7 +234,7 @@ terraform import 'module.destination.aws_iam_saml_provider.saml[0]' arn:aws:iam:
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_athena_query_results_bucket"></a> [athena\_query\_results\_bucket](#input\_athena\_query\_results\_bucket) | The name of the Athena query results bucket | `string` | `""` | no |
 | <a name="input_athena_workgroup"></a> [athena\_workgroup](#input\_athena\_workgroup) | The name of the Athena workgroup | `string` | `""` | no |
 | <a name="input_cfn_dashboards_version"></a> [cfn\_dashboards\_version](#input\_cfn\_dashboards\_version) | The version of the CUDOS dashboards | `string` | `"4.3.7"` | no |
@@ -298,7 +298,7 @@ terraform import 'module.destination.aws_iam_saml_provider.saml[0]' arn:aws:iam:
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cfn_dashboards_version"></a> [cfn\_dashboards\_version](#output\_cfn\_dashboards\_version) | The version of the CUDOS dashboards |
 | <a name="output_cloudformation_bucket_arn"></a> [cloudformation\_bucket\_arn](#output\_cloudformation\_bucket\_arn) | The name of the bucket where to store the CloudFormation |
 | <a name="output_cloudformation_templates_prefix"></a> [cloudformation\_templates\_prefix](#output\_cloudformation\_templates\_prefix) | The S3 key prefix (includes hash) for CloudFormation templates |

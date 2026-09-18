@@ -190,26 +190,26 @@ terraform import 'module.destination.aws_iam_saml_provider.saml[0]' arn:aws:iam:
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.38.0 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_cloudformation_bucket"></a> [cloudformation\_bucket](#module\_cloudformation\_bucket) | git::https://github.com/alphagov/gds-tech-and-security-terraform-modules.git//aws-s3-bucket | aws-s3-bucket/v1.0.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_cloudformation_stack.cudos_read_permissions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudformation_stack) | resource |
 | [aws_cloudformation_stack.data_export_management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudformation_stack) | resource |
 | [aws_s3_object.cloudformation_templates](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object) | resource |
@@ -220,7 +220,7 @@ terraform import 'module.destination.aws_iam_saml_provider.saml[0]' arn:aws:iam:
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_destination_account_id"></a> [destination\_account\_id](#input\_destination\_account\_id) | The AWS account ID for the destination account | `string` | n/a | yes |
 | <a name="input_enable_backup_module"></a> [enable\_backup\_module](#input\_enable\_backup\_module) | Indicates if the Backup module should be enabled | `bool` | `true` | no |
 | <a name="input_enable_budgets_module"></a> [enable\_budgets\_module](#input\_enable\_budgets\_module) | Indicates if the Budget module should be enabled | `bool` | `true` | no |
@@ -247,7 +247,7 @@ terraform import 'module.destination.aws_iam_saml_provider.saml[0]' arn:aws:iam:
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cloudformation_bucket_name"></a> [cloudformation\_bucket\_name](#output\_cloudformation\_bucket\_name) | The name of the bucket to store the CloudFormation templates |
 | <a name="output_cloudformation_bucket_url"></a> [cloudformation\_bucket\_url](#output\_cloudformation\_bucket\_url) | The URL of the bucket to store the CloudFormation templates |
 | <a name="output_cloudformation_templates_prefix"></a> [cloudformation\_templates\_prefix](#output\_cloudformation\_templates\_prefix) | The S3 key prefix (includes hash) for CloudFormation templates |
