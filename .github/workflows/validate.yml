@@ -23,7 +23,7 @@ jobs:
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
     - name: Install terraform and dependencies
-      uses: alphagov/gds-tech-and-security-github-actions/terraform/deps@47ffdc3007aef6b4857115b97135ed8b7b7c18ca # v0.1.7
+      uses: alphagov/gds-tech-and-security-github-actions/terraform/deps@4b0a3ad58c1ea4b3ff1d5ed0a5ae6bc1c91455ec # v0.1.22
       with:
         trivy-version: v0.69.3
 
