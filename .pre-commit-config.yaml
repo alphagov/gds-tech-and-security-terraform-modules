@@ -79,7 +79,7 @@ repos:
 
       - id: terraform_docs
         args:
-          - --args=--config=.terraform-docs.yml
+          - --args=--config=.terraform-docs.yml --lockfile=false
 
       - id: terraform_validate
         name: Terraform validate modules
