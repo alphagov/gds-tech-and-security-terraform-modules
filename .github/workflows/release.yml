@@ -28,7 +28,7 @@ jobs:
           echo "Module: ${MODULE}, Version: ${VERSION}"
 
   release:
-    uses: alphagov/gds-tech-and-security-github-actions/.github/workflows/terraform-module-release.yml@0036b2036ae982d2a4ca78a2ffd0cf8b10ff6df6
+    uses: alphagov/gds-tech-and-security-github-actions/.github/workflows/terraform-module-release.yml@1c040c2defd457c030bccc341e2d7a399267b627
     name: GitHub Release
     needs: extract-module
     with:
