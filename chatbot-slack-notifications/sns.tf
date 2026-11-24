@@ -3,7 +3,7 @@ resource "aws_sns_topic" "this" {
   tags = {
     Name        = var.alarm_name
     environment = var.environment
-    Owner       = "engineering-enablement"
+    Owner       = var.owner_tag
     Terraform   = "true"
   }
 }

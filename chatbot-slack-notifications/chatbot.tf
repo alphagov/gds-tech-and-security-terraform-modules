@@ -16,7 +16,7 @@ resource "aws_cloudwatch_metric_alarm" "this" {
   tags = {
     Name        = var.alarm_name
     environment = var.environment
-    Owner       = "engineering-enablement"
+    Owner       = var.owner_tag
     Terraform   = "true"
   }
 }
@@ -30,7 +30,7 @@ resource "aws_cloudwatch_event_rule" "this" {
   tags = {
     Name        = var.alarm_name
     environment = var.environment
-    Owner       = "engineering-enablement"
+    Owner       = var.owner_tag
     Terraform   = "true"
   }
 }

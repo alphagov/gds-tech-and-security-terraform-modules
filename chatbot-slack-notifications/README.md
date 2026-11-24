@@ -23,6 +23,7 @@ module "lambda-errors" {
   type            = "metric"
   environment     = var.environment
   chatbot_role_id = module.chatbot-role.id
+  owner_tag       = "engineering-enablement"
 
   alarm_name          = "lambda-errors"
   alarm_description   = "The account bootstrap lambda has failed"
@@ -44,6 +45,7 @@ module "service_linked_role_alarm" {
   type            = "eventbridge"
   environment     = var.environment
   chatbot_role_id = module.chatbot-role.id
+  owner_tag       = "engineering-enablement"
 
   providers = {
     aws = aws.us_east_1
@@ -88,6 +90,7 @@ module "codepipeline_notifications" {
   chatbot_role_id   = module.chatbot-role.id
   alarm_name        = "code-pipeline-errors"
   alarm_description = "Code piepline errors on ${var.environment}"
+  owner_tag         = "engineering-enablement"
 
   notification_rules = [
     {
@@ -132,7 +135,8 @@ eg
 
 ```hcl
 module "chatbot-role" {
-  source = "../modules/chatbot-slack-notifications-iam"
+  source    = "../modules/chatbot-slack-notifications-iam"
+  owner_tag = "engineering-enablement"
 }
 
 resource "aws_chatbot_slack_channel_configuration" "account-slack-channel-name" {

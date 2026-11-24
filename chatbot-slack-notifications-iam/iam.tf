@@ -17,7 +17,7 @@ resource "aws_iam_role" "chatbot_role" {
 
   tags = {
     Name      = "ChatbotSlackRole-${random_id.chatbot_id.id}"
-    Owner     = "engineering-enablement"
+    Owner     = var.owner_tag
     Terraform = "true"
   }
 }
