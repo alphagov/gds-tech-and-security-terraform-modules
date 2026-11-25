@@ -1,5 +1,8 @@
+#trivy:ignore:AWS-0095
 resource "aws_sns_topic" "this" {
+  #checkov:skip=CKV_AWS_26:Cloudwatch Alarms needs a user-managed key to publish to encrypted topics
   name = var.alarm_name
+
   tags = {
     Name        = var.alarm_name
     environment = var.environment
