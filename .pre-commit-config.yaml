@@ -5,28 +5,28 @@ repos:
       - id: detect-private-key
 
       - id: check-added-large-files
-        args: [ "--maxkb=800" ]
+        args: ["--maxkb=800"]
 
       - id: check-case-conflict
 
       - id: check-json
         # Exclude non-standard JSON
         exclude: |
-            (?x)^(
-                .devcontainer/devcontainer.json|
-                .vscode/tasks.json
-            )$
+          (?x)^(
+              .devcontainer/devcontainer.json|
+              .vscode/tasks.json
+          )$
 
       - id: check-merge-conflict
 
       - id: check-symlinks
 
       - id: check-yaml
-        args: ['--allow-multiple-documents']
+        args: ["--allow-multiple-documents"]
         exclude: |
-            (?x)^(
-                .*/cloudformation/.*\.yaml$
-            )$
+          (?x)^(
+              .*/cloudformation/.*\.yaml$
+          )$
 
       - id: end-of-file-fixer
 
@@ -36,10 +36,10 @@ repos:
           - --indent=2
         # Exclude non-standard JSON
         exclude: |
-            (?x)^(
-                .devcontainer/devcontainer.json|
-                .vscode/tasks.json
-            )$
+          (?x)^(
+              .devcontainer/devcontainer.json|
+              .vscode/tasks.json
+          )$
 
       - id: trailing-whitespace
 
@@ -97,7 +97,7 @@ repos:
         args:
           - --args=--quiet
           - --args=--compact
-          - --args=--config-file ".checkov.yaml"
+          - --args=--config-file=__GIT_WORKING_DIR__/.checkov.yaml
 
       - id: terraform_trivy
         args:
