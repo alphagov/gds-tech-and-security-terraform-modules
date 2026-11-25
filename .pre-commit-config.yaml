@@ -44,7 +44,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/aws-cloudformation/cfn-lint
-    rev: e9340907215bca44b5e7908dc6f80217384b9632 # v1.46.0
+    rev: 720c5cc3d59094baee65a6f5648c111524545061 # v1.61.0
     hooks:
       - id: cfn-lint
         files: .*/cloudformation/.*\.yaml$
