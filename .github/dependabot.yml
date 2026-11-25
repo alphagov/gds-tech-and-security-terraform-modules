@@ -5,8 +5,24 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 5
+
   - package-ecosystem: terraform
     directories:
       - '/**'
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 5
+
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 5
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "pre-commit"
