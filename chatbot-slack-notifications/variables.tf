@@ -55,6 +55,12 @@ variable "dimension_name" {
   default     = null
 }
 
+variable "dimensions" {
+  description = "Map of dimensions for CloudWatch metric (overrides dimension_name and dimension_value)"
+  type        = map(string)
+  default     = null
+}
+
 variable "comparison_operator" {
   description = "Comparison operator for the alarm"
   type        = string

@@ -12,7 +12,11 @@ resource "aws_cloudwatch_metric_alarm" "this" {
   alarm_description   = var.alarm_description
   alarm_actions       = [aws_sns_topic.this.arn]
   treat_missing_data  = var.treat_missing_data
-  dimensions          = { (var.dimension_name) = var.dimension_value }
+
+  dimensions = var.dimensions != null ? var.dimensions : (
+    var.dimension_name != null ? { (var.dimension_name) = var.dimension_value } : null
+  )
+
   tags = {
     Name        = var.alarm_name
     environment = var.environment
